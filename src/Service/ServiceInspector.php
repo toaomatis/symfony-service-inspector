@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Model\YamlFile;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,6 +35,7 @@ final class ServiceInspector
 
     public function inspect(): void
     {
-
+        $yamlFile = new YamlFile($this->yamlFilePath, $this->logger);
+        $yamlFile->parse();
     }
 }
