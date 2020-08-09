@@ -51,8 +51,7 @@ final class ServiceInspectorCommand extends Command
             return Command::FAILURE;
         }
         $this->logger->info('Starting inspection...');
-        $this->serviceInspector->setYamlFilePath($yamlFilePath);
-        $this->serviceInspector->inspect();
+        $this->serviceInspector->inspect($yamlFilePath);
         $this->logger->info('Finished inspection.');
 
         return Command::SUCCESS;

@@ -15,27 +15,45 @@ final class ServiceInspector
     /** @var LoggerInterface */
     private LoggerInterface $logger;
 
-    /** @var string|null */
-    private ?string $yamlFilePath;
+    /** @var array */
+    private array $hashes;
 
     public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         $this->container = $container;
         $this->logger = $logger;
-        $this->yamlFilePath = null;
+        $this->hashes = [];
     }
 
     /**
      * @param string $yamlFilePath
      */
-    public function setYamlFilePath(string $yamlFilePath): void
+    public function inspect(string $yamlFilePath): void
     {
-        $this->yamlFilePath = $yamlFilePath;
+        $yamlFile = new YamlFile($yamlFilePath, $this->logger);
+        $yamlFile->parse();
+        $this->createHashmap($yamlFile);
     }
 
-    public function inspect(): void
+    private function createHashmap(YamlFile $yamlFile): void
     {
-        $yamlFile = new YamlFile($this->yamlFilePath, $this->logger);
-        $yamlFile->parse();
+        $services = $yamlFile->getServices();
+        foreach ($services as $name => $service) {
+            if ($name === '_defaults') {
+                continue;
+            }
+            $serialized = serialize($service);
+            $hash = md5($serialized);
+            if (array_key_exists($hash, $this->hashes) === true) {
+                $matchedName = $this->hashes[$hash];
+                $this->logger->warning(sprintf('Found duplicate hash for service "%s" --> "%s"', $name, $matchedName));
+                continue;
+            }
+            $this->hashes[$hash] = $name;
+        }
+        $imports = $yamlFile->getImports();
+        foreach ($imports as $import) {
+            $this->createHashmap($import);
+        }
     }
 }
