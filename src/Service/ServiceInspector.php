@@ -41,7 +41,7 @@ final class ServiceInspector
         $yamlFile = new YamlFile($yamlFilePath, $this->logger);
         $yamlFile->parse();
         $this->createHashmap($yamlFile);
-        $this->logger->info(sprintf('Found %d duplicates in "%s" recursively.', $this->duplicateCounter,
+        $this->logger->warning(sprintf('Found %d duplicates in "%s" recursively.', $this->duplicateCounter,
             $yamlFilePath));
         $this->countReferences($yamlFile);
         $this->reportReferences();
