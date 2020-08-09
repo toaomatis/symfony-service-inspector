@@ -24,6 +24,9 @@ final class ServiceInspector
     /** @var int */
     private int $duplicateCounter;
 
+    /** @var int */
+    private int $unreferencedCounter;
+
     public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         $this->container = $container;
@@ -31,6 +34,7 @@ final class ServiceInspector
         $this->hashes = [];
         $this->references = [];
         $this->duplicateCounter = 0;
+        $this->unreferencedCounter = 0;
     }
 
     /**
@@ -41,10 +45,12 @@ final class ServiceInspector
         $yamlFile = new YamlFile($yamlFilePath, $this->logger);
         $yamlFile->parse();
         $this->createHashmap($yamlFile);
-        $this->logger->warning(sprintf('Found %d duplicates in "%s" recursively.', $this->duplicateCounter,
-            $yamlFilePath));
         $this->countReferences($yamlFile);
         $this->reportReferences();
+        $this->logger->warning(sprintf('Found %d duplicates in "%s" recursively.', $this->duplicateCounter,
+            $yamlFilePath));
+        $this->logger->warning(sprintf('Found %d unreferenced in "%s" recursively.', $this->unreferencedCounter,
+            $yamlFilePath));
     }
 
     private function createHashmap(YamlFile $yamlFile): void
@@ -156,6 +162,7 @@ final class ServiceInspector
             $this->logger->debug(sprintf('Service "%s" is used %d times', $name, $count));
             if ($count === 0) {
                 $this->logger->warning(sprintf('Unreferenced Service "%s"', $name));
+                $this->unreferencedCounter++;
             }
         }
     }
