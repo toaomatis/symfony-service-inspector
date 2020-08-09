@@ -3,6 +3,21 @@
   <component name="PhpDockerContainerSettings">
     <list>
       <map>
+        <entry key="b3831ef2-feab-4b36-a8eb-12bcf75f4344">
+          <value>
+            <DockerContainerSettings>
+              <option name="version" value="1" />
+              <option name="volumeBindings">
+                <list>
+                  <DockerVolumeBindingImpl>
+                    <option name="containerPath" value="/opt/project" />
+                    <option name="hostPath" value="$PROJECT_DIR$" />
+                  </DockerVolumeBindingImpl>
+                </list>
+              </option>
+            </DockerContainerSettings>
+          </value>
+        </entry>
         <entry key="e7703366-4172-4f83-931f-bb65e08611ea">
           <value>
             <DockerContainerSettings>
