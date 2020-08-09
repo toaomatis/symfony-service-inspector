@@ -52,6 +52,22 @@ final class YamlFile
     }
 
     /**
+     * @return array
+     */
+    public function getServices(): array
+    {
+        return $this->services;
+    }
+
+    /**
+     * @return YamlFile[]
+     */
+    public function getImports(): array
+    {
+        return $this->imports;
+    }
+
+    /**
      * @param string[][] $imports
      */
     private function recurse(array $imports): void
